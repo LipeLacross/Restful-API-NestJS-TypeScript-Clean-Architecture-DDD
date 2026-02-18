@@ -1,0 +1,2 @@
+atualizar bibs
+o arquivo .eslintrc.js hoje é eslint.config.mjs (verificar outros)
