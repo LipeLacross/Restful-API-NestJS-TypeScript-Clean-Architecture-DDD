@@ -45,3 +45,7 @@ lerna-debug.log*
 .env.development
 .env.test
 tsconfig.tsbuildinfo
+
+directory_listing.txt
+directory_tree.txt
+tk_super_v9.py
