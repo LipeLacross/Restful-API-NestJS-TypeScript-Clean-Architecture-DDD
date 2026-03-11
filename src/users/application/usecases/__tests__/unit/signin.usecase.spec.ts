@@ -36,34 +36,32 @@ describe('SigninUseCase unit tests', () => {
   })
 
   it('Should throws error when email not provided', async () => {
-    const props = { email: null, password: '1234' }
-    await expect(() => sut.execute(props)).rejects.toBeInstanceOf(
-      BadRequestError,
-    )
+    await expect(() =>
+      sut.execute({ email: null, password: '1234' }),
+    ).rejects.toBeInstanceOf(BadRequestError)
   })
 
   it('Should throws error when password not provided', async () => {
-    const props = { email: 'a@a.com', password: null }
-    await expect(() => sut.execute(props)).rejects.toBeInstanceOf(
-      BadRequestError,
-    )
+    await expect(() =>
+      sut.execute({ email: 'a@a.com', password: null }),
+    ).rejects.toBeInstanceOf(BadRequestError)
   })
 
-  it('Should not be able to authenticate with wrong email', async () => {
-    const props = { email: 'a@a.com', password: '1234' }
-    await expect(() => sut.execute(props)).rejects.toBeInstanceOf(NotFoundError)
+  it('Should not be able authenticate with wrong email', async () => {
+    await expect(() =>
+      sut.execute({ email: 'a@a.com', password: '1234' }),
+    ).rejects.toBeInstanceOf(NotFoundError)
   })
 
-  it('Should not be able to authenticate with wrong password', async () => {
+  it('Should not be able authenticate with wrong password', async () => {
     const hashPassword = await hashProvider.generateHash('1234')
     const entity = new UserEntity(
       UserDataBuilder({ email: 'a@a.com', password: hashPassword }),
     )
     repository.items = [entity]
 
-    const props = { email: 'a@a.com', password: 'fake' }
-    await expect(() => sut.execute(props)).rejects.toBeInstanceOf(
-      InvalidCredentialsError,
-    )
+    await expect(() =>
+      sut.execute({ email: 'a@a.com', password: 'fake' }),
+    ).rejects.toBeInstanceOf(InvalidCredentialsError)
   })
 })
