@@ -14,11 +14,53 @@ npx dotenv-cli -e .env.test -- prisma migrate dev --schema=src/infra/database/pr
 npx dotenv-cli -e .env.production -- prisma migrate dev --schema=src/infra/database/prisma/schema.prisma
 
 comandos nest.js
-npm install -g @nestjs/cli
-nest new api-rest-nestjs
+# Módulos
 nest g module users
-nest g controller users
-nest g service users
+nest g module users --no-spec  # sem arquivo de teste
 
+# Controladores
+nest g controller users
+nest g controller users --flat   # sem criar pasta separada
+nest g controller users --no-spec
+
+# Serviços
+nest g service users
+nest g service users --no-spec
+
+# Gerar tudo de uma vez (mais comum)
+nest g resource users
+# Isso gera: module, controller, service, entity, DTOs e mais!
+
+🔧 Outros Geradores Úteis
+
+# Classes
+nest g class users/shared/user-entity
+nest g interface users/shared/user.interface
+
+# Guards (para autenticação/autorização)
+nest g guard auth/guards/jwt
+
+# Interceptors
+nest g interceptor common/interceptors/logging
+
+# Pipes
+nest g pipe common/pipes/validation
+
+# Filters (exception filters)
+nest g filter common/filters/http-exception
+
+# Decorators
+nest g decorator common/decorators/user
+
+# Middleware
+nest g middleware common/middleware/logger
+
+
+📝 Opções Comuns
+bash
+# Flags mais usadas:
+--flat          # Não cria pasta adicional (arquivo direto na pasta)
+--no-spec       # Não gera arquivo de teste
+--dry-run       # Simula a geração sem criar arquivos
 
 https://www.aluiziodeveloper.com.br/curso-de-nodejs-avan%C3%A7ado-com-clean-architecture-nestjs-e-typescript/
