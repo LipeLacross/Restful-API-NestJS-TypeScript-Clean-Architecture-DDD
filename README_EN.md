@@ -17,7 +17,7 @@ A practical project to build a RESTful API using Node.js, NestJS and TypeScript,
 - ✅ Automated tests (unit, integration and e2e)
 - ✅ Prisma ORM for persistence
 - ✅ Multi-environment configuration (development, test, production)
-- ✅ API Documentation with Swagger (planned)
+- ✅ API Documentation with Swagger
 
 ### 🔨 Project Features
 
@@ -28,6 +28,12 @@ A practical project to build a RESTful API using Node.js, NestJS and TypeScript,
 - **Update User**: Update user name
 - **Update Password**: Change user password
 - **Delete User**: Remove user from system
+
+### 📸 API Documentation (Swagger)
+
+![Swagger API Documentation](public/Screenshot%202026-03-15%20144236.png)
+
+API documentation is available via Swagger at `/api` when the application is running.
 
 ### ✔️ Technologies Used
 
@@ -68,26 +74,134 @@ graph TB
 
 ### 📁 Project Structure
 
+The project structure follows **Clean Architecture** and **Domain-Driven Design (DDD)** principles, organizing code into well-defined layers as shown in the image below:
+
+![Directory Structure](public/Screenshot%202026-03-15%20144236.png)
+
+---
+
+### 📂 Structure Details
+
+#### **Root Files**
 ```
 src/
-├── app.module.ts          # Main module
-├── main.ts               # Entry point
-├── users/                # Users module
-│   ├── application/      # Application layer
-│   │   ├── dtos/        # Data Transfer Objects
-│   │   └── usecases/   # Use cases
-│   ├── domain/          # Domain layer
-│   │   ├── entities/   # Entities
-│   │   └── repositories/ # Repository interfaces
-│   └── infrastructure/  # Infrastructure layer
-│       ├── controllers/ # NestJS Controllers
-│       ├── dtos/       # DTOs
-│       └── database/   # Prisma Implementation
-├── auth/                 # Authentication module
-└── shared/              # Shared resources
-    ├── application/     # Shared application
-    ├── domain/         # Shared entities and errors
-    └── infrastructure/ # Filters, interceptors, etc.
+├── app.module.ts              # Root module - registers and coordinates all application modules
+├── main.ts                   # Entry point - configures and initializes NestJS server
+├── global-config.ts          # Global configurations (constants, environment variables)
+├── app.controller.ts         # Root controller - GET / health check route
+├── app.service.ts            # Root service - basic root business logic
+```
+
+#### **Users Module (`users/`)**
+```
+users/
+├── application/              # 📋 Application Layer - Use Cases
+│   ├── dtos/
+│   │   └── user-output.ts    # Output DTO - defines format of data returned to client
+│   └── usecases/
+│       ├── signup.usecase.ts         # Creates new user in the system
+│       ├── signin.usecase.ts         # Authenticates user and returns JWT token
+│       ├── listusers.usecase.ts      # Lists users with pagination (15 per page)
+│       ├── getuser.usecase.ts        # Finds individual user by ID
+│       ├── update-user.usecase.ts    # Updates user data (name)
+│       ├── update-password.usecase.ts # Changes user password
+│       └── delete-user.usecase.ts    # Removes user from system
+│
+├── domain/                   # 💼 Domain Layer - Business Rules
+│   ├── entities/
+│   │   └── user.entity.ts   # User Entity - represents business object with validations
+│   ├── repositories/
+│   │   └── user.repository.ts  # Interface (contract) - defines repository operations
+│   └── validators/
+│       └── user.validator.ts   # Domain-specific validation rules
+│
+└── infrastructure/           # ⚙️ Infrastructure Layer - Implementations
+    ├── users.controller.ts   # REST Controller - exposes API endpoints
+    ├── users.module.ts       # NestJS Module - injects module dependencies
+    ├── users.service.ts      # Main service (legacy - used with use cases)
+    ├── presenters/
+    │   └── user.presenter.ts # Presenter - transforms entity for API response
+    ├── providers/hash-provider/
+    │   └── bcryptjs-hash.provider.ts # Provider - password hash implementation
+    ├── dtos/
+    │   ├── signup.dto.ts      # Input validation for user creation
+    │   ├── signin.dto.ts      # Input validation for login
+    │   ├── list-users.dto.ts  # Pagination and filter parameters
+    │   ├── update-user.dto.ts # Input validation for data update
+    │   └── update-password.dto.ts # Input validation for password change
+    └── database/
+        ├── prisma/repositories/
+        │   └── user-prisma.repository.ts # Prisma repository implementation
+        ├── prisma/models/
+        │   └── user-model.mapper.ts      # Mapper - converts entity ↔ Prisma model
+        └── in-memory/repositories/
+            └── user-in-memory.repository.ts # In-memory repository for testing
+```
+
+#### **Authentication Module (`auth/`)**
+```
+auth/
+└── infrastructure/
+    ├── auth.module.ts    # Authentication module - configures JWT and strategies
+    ├── auth.service.ts   # Service - generates and validates JWT tokens
+    └── auth.guard.ts    # Guard - protects routes requiring authentication
+```
+
+#### **Shared Module (`shared/`)**
+```
+shared/
+├── application/              # Shared components between modules
+│   ├── usecases/
+│   │   └── use-case.ts      # Base interface - standard for all use cases
+│   ├── errors/
+│   │   ├── bad-request-error.ts       # Error 400 - invalid request
+│   │   ├── invalid-credentials-error.ts # Error 401 - incorrect credentials
+│   │   └── invalid-password-error.ts  # Error 400 - invalid password
+│   └── dtos/
+│       └── pagination-output.ts      # Standard pagination DTO
+│
+├── domain/                  # Shared domain components
+│   └── validators/
+│       ├── validator-fields.interface.ts    # Generic validator interface
+│       └── class-validator-fields.ts        # Implementation using class-validator
+│
+└── infrastructure/          # Shared infrastructure
+    ├── env-config/         # Environment variables configuration
+    ├── database/prisma/    # Prisma service and test configurations
+    ├── presenters/         # Response formatters (pagination, collection)
+    ├── interceptors/       # HTTP interceptors (response wrapper)
+    └── exception-filters/  # Exception filters (404, 401, 409, etc)
+```
+
+---
+
+### 📖 Clean Architecture Layer Explanation
+
+| Layer | Responsibility | Dependencies |
+|-------|----------------|--------------|
+| **Presentation** (`*/infrastructure`) | Receives HTTP requests, returns responses, validates input | Has no business rules |
+| **Application** (`*/application`) | Orchestrates use cases, coordinates entities, applies business rules | Depends only on Domain |
+| **Domain** (`*/domain`) | Contains pure business rules, entities, interfaces | No external dependencies |
+| **Infrastructure** (`*/infrastructure`) | External implementations: database, HTTP, cache, etc | Implements Domain interfaces |
+
+### 🎯 Data Flow (Request → Response)
+
+```
+1. HTTP Request
+      ↓
+2. Controller (receives request, validates DTO)
+      ↓
+3. Use Case (executes business logic)
+      ↓
+4. Entity (applies business rules)
+      ↓
+5. Repository Interface (contract)
+      ↓
+6. Repository Implementation (Prisma)
+      ↓
+7. Database (PostgreSQL)
+      ↓
+Return: Entity → Use Case → Presenter → Controller → HTTP Response
 ```
 
 ## 🛠️ Prerequisites

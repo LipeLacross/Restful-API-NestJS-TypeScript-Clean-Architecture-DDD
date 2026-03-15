@@ -17,7 +17,7 @@ Um projeto prático para construir uma API RESTful usando Node.js, NestJS e Type
 - ✅ Testes automatizados (unitários, integração e e2e)
 - ✅ Prisma ORM para persistência
 - ✅ Configuração multi-ambiente (development, test, production)
-- ✅ Documentação da API com Swagger (planejado)
+- ✅ Documentação da API com Swagger
 
 ### 🔨 Funcionalidades do Projeto
 
@@ -28,6 +28,12 @@ Um projeto prático para construir uma API RESTful usando Node.js, NestJS e Type
 - **Atualizar Usuário**: Atualizar nome de um usuário
 - **Atualizar Senha**: Alterar senha do usuário
 - **Excluir Usuário**: Remover usuário do sistema
+
+### 📸 Documentação da API (Swagger)
+
+![Swagger API Documentation](public/Screenshot%202026-03-15%20144236.png)
+
+A documentação da API está disponível via Swagger em `/api` quando a aplicação estiver rodando.
 
 ### ✔️ Técnicas e Tecnologias Utilizadas
 
@@ -68,27 +74,137 @@ graph TB
 
 ### 📁 Estrutura do Projeto
 
+A estrutura do projeto segue os princípios do **Clean Architecture** e **Domain-Driven Design (DDD)**, organizando o código em camadas bem definidas:
+
+---
+
+### 📂 Detalhamento da Estrutura
+
+#### **Arquivos Raiz**
 ```
 src/
-├── app.module.ts          # Módulo principal
-├── main.ts               # Ponto de entrada
-├── users/                # Módulo de usuários
-│   ├── application/      # Camada de aplicação
-│   │   ├── dtos/        # Objetos de transferência
-│   │   └── usecases/   # Casos de uso
-│   ├── domain/          # Camada de domínio
-│   │   ├── entities/   # Entidades
-│   │   └── repositories/ # Interfaces de repositório
-│   └── infrastructure/  # Camada de infraestrutura
-│       ├── controllers/ # Controladores NestJS
-│       ├── dtos/       # DTOs
-│       └── database/   # Implementação Prisma
-├── auth/                 # Módulo de autenticação
-└── shared/              # Recursos compartilhados
-    ├── application/     # Uso compartilhado
-    ├── domain/         # Entidades e erros compartilhados
-    └── infrastructure/ # Filtros, interceptors, etc.
+├── app.module.ts              # Módulo raiz - registra e coordena todos os módulos da aplicação
+├── main.ts                   # Ponto de entrada - configura e inicializa o servidor NestJS
+├── global-config.ts          # Configurações globais (constantes, variáveis de ambiente)
+├── app.controller.ts         # Controller raiz - rota GET / para verificação de saúde
+├── app.service.ts           # Serviço raiz - lógica de negócio básica da raiz
 ```
+
+#### **Módulo de Usuários (`users/`)**
+```
+users/
+├── application/              # 📋 Camada de Aplicação - Casos de Uso
+│   ├── dtos/
+│   │   └── user-output.ts    # DTO de saída - define formato dos dados retornados ao cliente
+│   └── usecases/
+│       ├── signup.usecase.ts         # Cria novo usuário no sistema
+│       ├── signin.usecase.ts         # Autentica usuário e retorna token JWT
+│       ├── listusers.usecase.ts      # Lista usuários com paginação (15 por página)
+│       ├── getuser.usecase.ts        # Busca usuário individual por ID
+│       ├── update-user.usecase.ts    # Atualiza dados (nome) do usuário
+│       ├── update-password.usecase.ts # Altera senha do usuário
+│       └── delete-user.usecase.ts    # Remove usuário do sistema
+│
+├── domain/                   # 💼 Camada de Domínio - Regras de Negócio
+│   ├── entities/
+│   │   └── user.entity.ts   # Entidade Usuário - representa o objeto de negócio com validações
+│   ├── repositories/
+│   │   └── user.repository.ts  # Interface (contrato) - define operações do repositório
+│   └── validators/
+│       └── user.validator.ts   # Regras de validação específicas do domínio
+│
+└── infrastructure/           # ⚙️ Camada de Infraestrutura - Implementações
+    ├── users.controller.ts   # Controlador REST - expõe endpoints da API
+    ├── users.module.ts       # Módulo NestJS - injeta dependências do módulo
+    ├── users.service.ts      # Serviço principal (legacy - usado com use cases)
+    ├── presenters/
+    │   └── user.presenter.ts # Presenter - transforma entidade para resposta da API
+    ├── providers/hash-provider/
+    │   └── bcryptjs-hash.provider.ts # Provider - implementação de hash de senha
+    ├── dtos/
+    │   ├── signup.dto.ts      # Validação dos dados de entrada para criação
+    │   ├── signin.dto.ts      # Validação dos dados de entrada para login
+    │   ├── list-users.dto.ts  # Parâmetros de paginação e filtros
+    │   ├── update-user.dto.ts # Validação para atualização de dados
+    │   └── update-password.dto.ts # Validação para alteração de senha
+    └── database/
+        ├── prisma/repositories/
+        │   └── user-prisma.repository.ts # Implementação Prisma do repositório
+        ├── prisma/models/
+        │   └── user-model.mapper.ts      # Mapper - converte entidade ↔ modelo Prisma
+        └── in-memory/repositories/
+            └── user-in-memory.repository.ts # Repositório em memória para testes
+```
+
+#### **Módulo de Autenticação (`auth/`)**
+```
+auth/
+└── infrastructure/
+    ├── auth.module.ts    # Módulo de autenticação - configura JWT e estratégias
+    ├── auth.service.ts   # Serviço - gera e valida tokens JWT
+    └── auth.guard.ts     # Guard - protege rotas que requerem autenticação
+```
+
+#### **Módulo Compartilhado (`shared/`)**
+```
+shared/
+├── application/              # Componentes compartilhados entre módulos
+│   ├── usecases/
+│   │   └── use-case.ts      # Interface base - padrão para todos os use cases
+│   ├── errors/
+│   │   ├── bad-request-error.ts       # Erro 400 - requisição inválida
+│   │   ├── invalid-credentials-error.ts # Erro 401 - credenciais incorretas
+│   │   └── invalid-password-error.ts  # Erro 400 - senha inválida
+│   └── dtos/
+│       └── pagination-output.ts      # DTO padrão de paginação
+│
+├── domain/                  # Componentes de domínio compartilhados
+│   └── validators/
+│       ├── validator-fields.interface.ts    # Interface de validador genérico
+│       └── class-validator-fields.ts        # Implementação usando class-validator
+│
+└── infrastructure/          # Infraestrutura compartilhada
+    ├── env-config/         # Configuração de variáveis de ambiente
+    ├── database/prisma/     # Serviço Prisma e configurações de teste
+    ├── presenters/         # Formatadores de resposta (paginação, coleção)
+    ├── interceptors/       # Interceptadores HTTP (wrapper de resposta)
+    └── exception-filters/  # Filtros de exceção (404, 401, 409, etc)
+```
+
+---
+
+### 📖 Explicação das Camadas do Clean Architecture
+
+| Camada | Responsabilidade | Dependências |
+|--------|------------------|--------------|
+| **Presentation** (`*/infrastructure`) | Recebe requisições HTTP, retorna respostas, valida dados de entrada | Não tem regras de negócio |
+| **Application** (`*/application`) | Orquestra casos de uso, coordena entidades, aplica regras de negócio | Depende apenas do Domain |
+| **Domain** (`*/domain`) | Contém regras de negócio puras, entidades, interfaces | Nenhuma dependência externa |
+| **Infrastructure** (`*/infrastructure`) | Implementações externas: banco de dados, HTTP, cache, etc | Implementa interfaces do Domain |
+
+### 🎯 Fluxo de Dados (Request → Response)
+
+```
+1. HTTP Request
+      ↓
+2. Controller (recebe requisição, valida DTO)
+      ↓
+3. Use Case (executa lógica de negócio)
+      ↓
+4. Entity (aplica regras de negócio)
+      ↓
+5. Repository Interface (contrato)
+      ↓
+6. Repository Implementation (Prisma)
+      ↓
+7. Banco de Dados (PostgreSQL)
+      ↓
+Retorno: Entity → Use Case → Presenter → Controller → HTTP Response
+```
+
+---
+
+## 🛠️ Pré-requisitos
 
 ## 🛠️ Pré-requisitos
 
