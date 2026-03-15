@@ -1,5 +1,8 @@
 # 🚀 RESTful API com NestJS, TypeScript e Clean Architecture
 
+## 🌐🇧🇷 [Versão Portuguesa](README.md)
+## 🌐🇺🇸 [English Version](README_EN.md)
+
 ## 📋 Sobre o Projeto
 
 Um projeto prático para construir uma API RESTful usando Node.js, NestJS e TypeScript, aplicando **Clean Architecture**, **Domain-Driven Design (DDD)** e princípios **SOLID**, com testes automatizados.
@@ -11,12 +14,81 @@ Um projeto prático para construir uma API RESTful usando Node.js, NestJS e Type
 - ✅ Clean Architecture com camadas bem definidas
 - ✅ Domain-Driven Design (DDD)
 - ✅ Princípios SOLID
-- ✅ Testes automatizados (unitários e e2e)
+- ✅ Testes automatizados (unitários, integração e e2e)
 - ✅ Prisma ORM para persistência
 - ✅ Configuração multi-ambiente (development, test, production)
 - ✅ Documentação da API com Swagger (planejado)
 
+### 🔨 Funcionalidades do Projeto
 
+- **Cadastro de Usuários**: Criar novos usuários no sistema
+- **Autenticação**: Login com JWT (JSON Web Token)
+- **Listagem de Usuários**: Listar todos os usuários com paginação (15 itens por página)
+- **Buscar Usuário**: Exibir dados de um usuário específico
+- **Atualizar Usuário**: Atualizar nome de um usuário
+- **Atualizar Senha**: Alterar senha do usuário
+- **Excluir Usuário**: Remover usuário do sistema
+
+### ✔️ Técnicas e Tecnologias Utilizadas
+
+- **Node.js** - Runtime JavaScript
+- **NestJS** - Framework Node.js
+- **TypeScript** - Linguagem com tipagem estática
+- **Prisma ORM** - ORM para banco de dados
+- **PostgreSQL** - Banco de dados relacional
+- **JWT** - Autenticação por token
+- **bcryptjs** - Criptografia de senhas
+- **Jest** - Framework de testes
+- **Docker** - Containerização (opcional)
+
+### 📊 Arquitetura do Projeto
+
+```mermaid
+graph TB
+    subgraph Presentation
+        A[Controllers] --> B[Use Cases]
+    end
+    
+    subgraph Application
+        B --> C[DTOs]
+    end
+    
+    subgraph Domain
+        C --> D[Entities]
+        C --> E[Repositories Interfaces]
+    end
+    
+    subgraph Infrastructure
+        E --> F[Prisma Repository]
+        F --> G[PostgreSQL]
+    end
+    
+    B --> F
+```
+
+### 📁 Estrutura do Projeto
+
+```
+src/
+├── app.module.ts          # Módulo principal
+├── main.ts               # Ponto de entrada
+├── users/                # Módulo de usuários
+│   ├── application/      # Camada de aplicação
+│   │   ├── dtos/        # Objetos de transferência
+│   │   └── usecases/   # Casos de uso
+│   ├── domain/          # Camada de domínio
+│   │   ├── entities/   # Entidades
+│   │   └── repositories/ # Interfaces de repositório
+│   └── infrastructure/  # Camada de infraestrutura
+│       ├── controllers/ # Controladores NestJS
+│       ├── dtos/       # DTOs
+│       └── database/   # Implementação Prisma
+├── auth/                 # Módulo de autenticação
+└── shared/              # Recursos compartilhados
+    ├── application/     # Uso compartilhado
+    ├── domain/         # Entidades e erros compartilhados
+    └── infrastructure/ # Filtros, interceptors, etc.
+```
 
 ## 🛠️ Pré-requisitos
 
@@ -24,7 +96,7 @@ Um projeto prático para construir uma API RESTful usando Node.js, NestJS e Type
 - npm ou yarn
 - PostgreSQL (versão 14.x ou superior)
 - Docker (opcional, para ambiente de desenvolvimento)
-jwt encoded decoded payload verify signature
+
 ## 🚀 Começando
 
 ### 1️⃣ Instalação
@@ -280,16 +352,14 @@ npm run test:e2e -- --runInBand --forceExit --coverage
 
 ```bash
 # Adicione estes scripts ao seu package.json
-: '
-"scripts": {
-  "test:e2e:watch": "npm run test:e2e -- --watch",
-  "test:e2e:cov": "npm run test:e2e -- --coverage",
-  "test:e2e:users": "npm run test:e2e -- test/e2e/users.e2e-spec.ts --watch",
-  "test:e2e:debug": "npm run test:e2e -- --detectOpenHandles --forceExit",
-  "test:all": "npm run test && npm run test:e2e",
-  "test:ci": "npm run test:e2e -- --runInBand --forceExit --coverage"
-}
-'
+# "scripts": {
+#   "test:e2e:watch": "npm run test:e2e -- --watch",
+#   "test:e2e:cov": "npm run test:e2e -- --coverage",
+#   "test:e2e:users": "npm run test:e2e -- test/e2e/users.e2e-spec.ts --watch",
+#   "test:e2e:debug": "npm run test:e2e -- --detectOpenHandles --forceExit",
+#   "test:all": "npm run test && npm run test:e2e",
+#   "test:ci": "npm run test:e2e -- --runInBand --forceExit --coverage"
+# }
 ```
 
 ## 📦 Scripts NPM Disponíveis
@@ -339,165 +409,85 @@ Este projeto utiliza commits semânticos:
 - `test:` - Testes
 - `chore:` - Tarefas de build/dependências
 
+## 🌐 Deploy
+
+### Render.com
+
+1. Conecte seu repositório GitHub ao Render
+2. Configure as variáveis de ambiente
+3. Execute o comando de build: `npm run build`
+4. Execute o comando de start: `npm run start:prod`
+
+> O Render tem um PostgreSQL gratuito que expira em 90 dias.
+
+### Fluxo de Trabalho com Git
+
+```bash
+# Criar nova funcionalidade
+git checkout -b nova-funcionalidade
+
+# Commit e push
+git add .
+git commit -m 'feat: nova funcionalidade'
+git push origin nova-funcionalidade
+
+# Criar Pull Request no GitHub
+# Vá até o repositório e crie um novo Pull Request
+# Compare as branches e faça o merge
+```
+
+## 🔧 Ferramentas de Integração Contínua
+
+- **Jenkins**: Ferramenta de automação de código aberto
+- **GitHub Actions**: Solução integrada com o GitHub
+- **Circle CI**: Plataforma de CI/CD baseada em nuvem
+- **AWS Code Build**: Serviço de CI da Amazon Web Services
+- **Azure DevOps**: CI/CD no ambiente Microsoft Azure
+- **Google Cloud Build**: Serviço de CI/CD do Google Cloud
+
 ## 📚 Documentação Adicional
+
+### Livros Indicados
+
+- **Arquitetura Limpa** - Robert C. Martin (O guia do artesão para estrutura e design de software)
+- **Implementando Domain-Driven Design** - Vaughn Vernon (Prático, usa Java)
+- **Atacando as complexidades no coração do software** - Eric Evans (Teórico, base do DDD)
+
+### Links Úteis
 
 - [Curso do Professor Jorge Aluizio](https://www.aluiziodeveloper.com.br/curso-de-nodejs-avan%C3%A7ado-com-clean-architecture-nestjs-e-typescript/)
 - [Documentação do NestJS](https://docs.nestjs.com/)
 - [Documentação do Prisma](https://www.prisma.io/docs/)
 - [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Domain-Driven Design Vernon](https://vaughnvernon.com)
+- [Martin Fowler](https://martinfowler.com)
+- [Clean Code Blog](https://blog.cleancoder.com/uncle-bob/)
+- [Swagger Editor](https://editor.swagger.io/)
+- [Insomnia](https://insomnia.rest)
 
+## 📚 Regras de Negócio
+
+- Os campos name, email e password são obrigatórios
+- O campo createdAt é preenchido automaticamente
+- Não é permitido cadastrar usuário com e-mail duplicado
+- A senha é criptografada com bcrypt
+- Listagens são paginadas com 15 itens por página
+- JWT encoded/decoded payload verify signature
 
 ## ✨ Contribuição
 
 1. Faça um Fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'feat: add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
+2. Crie uma branch para sua feature (`git checkout -b feature/NovaFuncionalidade`)
+3. Commit suas mudanças (`git commit -m 'feat: add nova funcionalidade'`)
+4. Push para a branch (`git push origin feature/NovaFuncionalidade`)
 5. Abra um Pull Request
-
-
 
 ---
 
 <p align="center">
-  ⭐️ Este projeto foi desenvolvido durante o curso do Professor Jorge Aluizio ⭐️
+  ⭐️ Projeto desenvolvido durante o curso do Professor Jorge Aluizio ⭐️
 </p>
-```
 
-
-Curso de NodeJs Avançado com Clean Architecture, NestJS e Typescript
-Projeto prático API Restful Nodejs, NestJS e Typescript, com testes automatizados, DDD, Clean Arch e Design Pattens.
-O que você aprenderá?
-Criar uma API REST em NodeJs com NestJS e Typescript
-Aplicar Design Patterns em projetos NodeJs com Typescript
-Criar testes automatizados em todas as camadas da aplicação
-Usar recursos avançados do Typescript como Interface e Generics
-Aplicar Clean Architecture e DDD em uma API criada com NestJS
-Gerar documentação de API NestJS com Swagger
-A﻿cesse agora a Pagina do Curso no portal Udemy.
-
-Descrição do Curso
-Criação de projeto prático direto ao ponto, exemplificando uma API Restful com Node.js, NestJS e Typescript, orientado à testes automatizados (unitários, de integração e ponta a ponta), aplicando conceitos de Domain Driven Design (DDD), Clean Architecture, Design Patterns e princípios SOLID.
-
-Neste curso nao teremos explicação do zero sobre as tecnologias abordadas, o foco aqui é criar um projeto prático aplicando alguns conceitos do DDD, Clean Architecture e Testes Automatizados desde o inicio do projeto.
-
-O objetivo deste curso é aprofundar na aplicação prática de todas essas tecnologias e metodologias citadas, seguindo as melhores práticas do mercado. Também serão abordados assuntos como princípios SOLID, design patterns e clean code.
-
-O projeto desenvolvido no curso será composto por um módulo de usuários com: entidade, validação dos dados, repositórios, casos de usos, funcionalidades de um CRUD, paginação dos dados retornados em lista, autenticação com JWT, tudo desenvolvido acompanhado de testes automatizados, dentro de uma arquitetura baseada em conceitos de DDD e Clean Architecture.
-
-O Framework NestJS ficará encarregado pelas funcionalidades da camada de infraestrutura. Serão inúmeros recursos do NestJS que usaremos para aumentar a produtividade, incluindo a criação de rotas, middlewares, controllers, interceptors, exception filters, guards, documentação, etc.
-
-Com relação aos recursos para manipulação dos dados da aplicação, usaremos o Prisma, que é um ORM (Object Relational Mapper) de código aberto que simplifica drasticamente a modelagem de dados, migrações e acesso a dados em bancos de dados SQL e NoSql.
-
-O curso inclui ainda:
-
-Instruções de configuração de ambiente de desenvolvimento.
-Projeto prático com um módulo de usuários.
-Testes Automatizados: unitários, de integração e ponta a ponta.
-Tratamento de erros e exceções.
-Consultas avançadas com Prisma ORM.
-Este curso é para você, se:
-
-Você deseja implementar APIs Restful seguindo práticas do mercado.
-Você gosta de aprender com a prática criando um projeto direto ao ponto.
-Este curso não é para você, se:
-
-Você é iniciante em programação.
-Você nunca trabalhou com Javascript, Nodejs ou banco de dados relacional.
-Tecnologias usadas e que precisarão estar instaladas no PC de cada aluno:
-
-Node.js versao 18 ou superior.
-Docker.
-VS Code ou similar.
-Insomnia ou similar.
-CLI do NestJS.
-CLI do Prisma ORM.
-Regras de negócio (RN)
-Os campos name, email e password serão de preenchimento obrigatório.
-O campo createdAt será de preenchimento opcional.
-O usuário não deve poder se cadastrar com e-mail duplicado.
-Requisitos funcionais (RF)
-Deve ser possível se cadastrar.
-Deve ser possível se autenticar.
-Deve ser possível exibir os dados de um usuário.
-Deve ser possível listar todos os usuários.
-Deve ser possível atualizar o nome de um usuário.
-Deve ser possível atualizar a senha de um usuário.
-Deve ser possível excluir um usuário.
-Requisitos não-funcionais (RNF)
-A senha do usuário precisa estar criptografada.
-Os dados da aplicação precisam estar persistidos em um banco de dados Postgres.
-Todas as listas de dados precisam estar paginadas com 15 itens por página.
-O usuário deve ser identificado por um JWT (JSON Web Token).
-Livros indicados como material de apoio
-Arquitetura Limpa:
-
-Titulo: O guia do artesao para estrutura e design de software
-Autor: Robert C. Martin
-Livro bem mais prático, abordando os conceitos de SOLID, arquitetura limpa, orientacao ao objeto, exemplos de como criar classes, etc.
-Red book Domain-Driven Design:
-
-Titulo: Implementando Domain-Driven Design
-Autor: Vaughn Vernon
-Usa a linguagem Java para mostrar na prática como aplicar o DDD em softwares, apesar de ter bastante teoria também.
-Blue book Domain-Driven Design:
-
-Titulo: Atacando as complexidades no coracao do software
-Autor: Eric Evans
-Esse livro é praticamente todo teorico, que aborda toda a metodologia de DDD que pode ser aplicada em um software. Não espere encontrar aqui projetos práticos ou exemplos completos em uma linguagem de programacao.
-The Clean Code Blog:
-
-https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
-
-https://vaughnvernon.com
-
-https://martinfowler.com
-
-http://cleancoder.com/products
-https://editor.swagger.io/
-https://insomnia.rest
-
-O papel do arquiteto de software
-Apesar de nem todas as organizações possuírem o cargo de arquiteto de software, normalmente profissionais mais experientes, como desenvolvedores seniors e tech leads, acabam realizando esse papel baseado em suas experiências anteriores.
-
-O principal papel que essa pessoa pode assumir é a função de transformar requisitos de negócios em padrões arquitetônicos. Ou seja, ela vai pensar em como atender a alguns requisitos da empresa, os transformando em uma solução.
-
-Esse arquiteto de software é um desenvolvedor e, em seu dia a dia, pode orquestrar o fluxo de comunicação entre pessoas desenvolvedoras e experts de domínio. A necessidade de ter um expert de domínio trabalhando junto com o desenvolvedor surge por existir, normalmente, uma dificuldade em alinhar o que vai ser desenvolvido com o que o cliente precisa.
-
-Esse expert é uma pessoa que sabe da necessidade da organização, ou na maioria das vezes é a pessoa que vai utilizar o software no dia a dia.
-
-Pilares da arquitetura de software
-Organização: organizar um sistema para que possamos atender os objetivos de negócio gerando um produto para o cliente final.
-Estruturação: criar um software de qualidade e que consiga evoluir com o passar do tempo.
-Componentização: componentização dos processos para que eles operem com eficácia, evitando o retrabalho.
-Relacionamento entre sistemas: preparar seus componentes para que esses consigam se integrar de maneira eficiente dentro de um processo maior.
-Governança: A governança busca a garantia de que o software continue funcionando independente de equipe.
-Clean Architecture, DDD e SOLID. Por quê?
-As empresas estao usando essas metodologias que garantem softwares com estruturas robustas, com maiores facilidades para manutenções, custos menores, além de várias outras vantagens. O software precisa agregar valor ao negócio para que seja válida sua existencia.
-FERRAMENTAS DE INTEGRAÇÃO CONTÍNUA
-
-Jenkins: ferramenta de automação de código aberto.
-
-GitHub Actions: solução integrada com o GitHub.
-
-Circle CI: plataforma de CI/CD baseada em nuvem.
-
-AWS Code Build: serviço de CI da Amazon Web Services.
-
-Azure DevOps: CI/CD no ambiente Microsoft Azure.
-
-Google Cloud Build
-
-
-https://github.com/marketplace?type=actions
-
-
-uso do https://render.com/
-
-pra deploy
-
-nova fucnionlaide - cria branch nova com git checkout -b nova-funcionalidade
-git push origin nova-funcionalidade
-vai abrir pull request _> compare e pull request -> create pull request -> merge pull request -> merge pull request
-
-
+<p align="center">
+  Desenvolvido por Felipe Moreira
+</p>
