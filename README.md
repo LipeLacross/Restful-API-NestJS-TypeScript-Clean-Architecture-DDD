@@ -495,3 +495,9 @@ https://github.com/marketplace?type=actions
 uso do https://render.com/
 
 pra deploy
+
+nova fucnionlaide - cria branch nova com git checkout -b nova-funcionalidade
+git push origin nova-funcionalidade
+vai abrir pull request _> compare e pull request -> create pull request -> merge pull request -> merge pull request
+
+
