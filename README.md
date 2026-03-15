@@ -24,7 +24,7 @@ Um projeto prático para construir uma API RESTful usando Node.js, NestJS e Type
 - npm ou yarn
 - PostgreSQL (versão 14.x ou superior)
 - Docker (opcional, para ambiente de desenvolvimento)
-
+jwt encoded decoded payload verify signature
 ## 🚀 Começando
 
 ### 1️⃣ Instalação
@@ -454,6 +454,8 @@ https://vaughnvernon.com
 https://martinfowler.com
 
 http://cleancoder.com/products
+https://editor.swagger.io/
+https://insomnia.rest
 
 O papel do arquiteto de software
 Apesar de nem todas as organizações possuírem o cargo de arquiteto de software, normalmente profissionais mais experientes, como desenvolvedores seniors e tech leads, acabam realizando esse papel baseado em suas experiências anteriores.
@@ -472,3 +474,24 @@ Relacionamento entre sistemas: preparar seus componentes para que esses consigam
 Governança: A governança busca a garantia de que o software continue funcionando independente de equipe.
 Clean Architecture, DDD e SOLID. Por quê?
 As empresas estao usando essas metodologias que garantem softwares com estruturas robustas, com maiores facilidades para manutenções, custos menores, além de várias outras vantagens. O software precisa agregar valor ao negócio para que seja válida sua existencia.
+FERRAMENTAS DE INTEGRAÇÃO CONTÍNUA
+
+Jenkins: ferramenta de automação de código aberto.
+
+GitHub Actions: solução integrada com o GitHub.
+
+Circle CI: plataforma de CI/CD baseada em nuvem.
+
+AWS Code Build: serviço de CI da Amazon Web Services.
+
+Azure DevOps: CI/CD no ambiente Microsoft Azure.
+
+Google Cloud Build
+
+
+https://github.com/marketplace?type=actions
+
+
+uso do https://render.com/
+
+pra deploy
